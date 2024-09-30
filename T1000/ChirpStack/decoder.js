@@ -108,22 +108,50 @@ const unpack = (frameID, payload) => {
       };
       break;
 
-    case "07":
+    case "07": // Wi-Fi Location and Sensor Packet-0x07
       result = {
         packetID: payload[0],
         eventStatus: utils.ByteEventStatus(payload.slice(1, 4)),
         motionSegmentNumber: utils.ByteMotionDetection(payload[4]),
         utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
-        longitude: utils.HexStringToDecimal(payload.slice(9, 13)) / 1000000,
-        latitude: utils.HexStringToDecimal(payload.slice(13, 17)) / 1000000,
-        temperature: utils.HexStringToDecimal(payload.slice(17, 19)) / 10,
-        light: utils.HexStringToDecimal(payload.slice(19, 21)),
-        batteryLevel: utils.HexStringToDecimal(payload[21]), // Battery level in percentage
+        macAddressOne: utils.ByteMacAddress(payload.slice(9, 15)),
+        rssiMacAddressOne: utils.ByteRSSIMacAddress(payload[15]),
+        macAddressTwo: utils.ByteMacAddress(payload.slice(16, 22)),
+        rssiMacAddressTwo: utils.ByteRSSIMacAddress(payload[22]),
+        macAddressThree: utils.ByteMacAddress(payload.slice(23, 29)),
+        rssiMacAddressThree: utils.ByteRSSIMacAddress(payload[29]),
+        macAddressFour: utils.ByteMacAddress(payload.slice(30, 36)),
+        rssiMacAddressFour: utils.ByteRSSIMacAddress(payload[36]),
+        temperature: utils.HexStringToDecimal(payload.slice(37, 39)) / 10,
+        light: utils.HexStringToDecimal(payload.slice(39, 41)),
+        batteryLevel: utils.HexStringToDecimal(payload[41]), // Battery level in percentage
       };
       break;
 
+    case "08": // Bluetooth Location and Sensor Packet-0x08
+      result = {};
+      break;
     // Add more cases for other frame IDs (0x07, 0x08, etc.)
 
+    case "09": // GNSS Location Only Packet-0x09
+      result = {};
+      break;
+
+    case "0A": // Wi-Fi Location Only Packet-0x0A
+      result = {};
+      break;
+
+    case "0B": // Bluetooth Location Only Packet-0x0B
+      result = {};
+      break;
+
+    case "0D": // Error Code Packet-0x0D
+      result = {};
+      break;
+
+    case "11": // Positioning Status and Sensor Packet-0x11
+      result = {};
+      break;
     default:
       result = { error: "Unsupported frameID" };
       break;

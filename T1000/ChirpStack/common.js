@@ -155,6 +155,7 @@ const ByteMotionDetection = (byte) => {
   return motionSegmentNumber;
 };
 
+// ByteEventStatus converts the hex represntation to a string
 const ByteEventStatus = (bytes) => {
   const byteString = bytes.join("");
 
@@ -176,6 +177,28 @@ const ByteEventStatus = (bytes) => {
   return "No event"; // If no bits are set
 };
 
+const ByteMacAddress = (bytes) => {
+  let macAddress = "";
+
+  if (bytes.length > 0) {
+    macAddress = bytes.map((byte) => byte.toUpperCase()).join(":");
+  } else {
+    macAddress = "Invalid byte mapping";
+  }
+
+  return macAddress;
+};
+
+const ByteRSSIMacAddress = (byte) => {
+  let decimalValue = parseInt(byte, 16);
+
+  if (decimalValue > 127) {
+    decimalValue -= 256;
+  }
+
+  return decimalValue;
+};
+
 // Export functions
 module.exports = {
   GetDeviceMode,
@@ -190,4 +213,6 @@ module.exports = {
   ByteThresholdWarning,
   ByteMotionDetection,
   ByteEventStatus,
+  ByteMacAddress,
+  ByteRSSIMacAddress,
 };
