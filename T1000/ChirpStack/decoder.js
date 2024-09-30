@@ -63,24 +63,22 @@ const unpack = (frameID, payload) => {
     case "02": // Device Status Packet - Periodic Modee - 0x02
       result = {
         packetID: payload[0],
-        batteryLevel: parseInt(payload.slice(1, 2).toString("hex"), 16), // Battery level
+        batteryLevel: utils.HexStringToDecimal(payload[1]), // Battery level in percentage
         softwareVersion: utils.BytesToVersion(payload.slice(2, 4)), // Software version
-        hardwareVersion: `${
-          parseInt(payload.slice(4, 6).toString("hex"), 16) >> 8
-        }.${parseInt(payload.slice(4, 6).toString("hex"), 16) & 0xff}`, // Hardware version
-        workMode:
-          parseInt(payload[6].toString("hex"), 16) === 0x01
-            ? "Periodic Mode"
-            : "Other Mode",
-        positioningStrategy: parseInt(payload[7].toString("hex"), 16),
-        heartbeatInterval: parseInt(payload.slice(8, 10).toString("hex"), 16),
-        uplinkInterval: parseInt(payload.slice(10, 12).toString("hex"), 16),
-        eventModeUplinkInterval: parseInt(
-          payload.slice(12, 14).toString("hex"),
-          16
-        ),
-        tempLightSwitch: payload[14] === 0x00 ? "Disabled" : "Enabled",
-        sosMode: payload[15] === 0x00 ? "Single Mode" : "Continuous Mode",
+        hardwareVersion: utils.BytesToVersion(payload.slice(4, 6)), // Hardware version
+        workMode: utils.GetDeviceMode(payload[6]), // Work mode
+        positioningStrategy: utils.BytesToPositioningStrategy(payload[7]), // Positioning strategy
+        heartbeatInterval: utils.BytesToInterval(payload.slice(8, 10)), // Heartbeat interval
+        uplinkInterval: utils.BytesToInterval(payload.slice(10, 12)), // Uplink interval
+        eventModeUplinkInterval: utils.BytesToInterval(payload.slice(12, 14)), // Event mode Uplink interval
+        tempLightSwitch:
+          payload[14] === "01"
+            ? "Open the temperature and light sensor"
+            : "Close the temperature and light sensor",
+        sosMode:
+          payload[15] === "00"
+            ? "use SOS single mode"
+            : "use SOS continuous mode",
       };
       break;
     case "05": // Heartbeat Packet -0x05
@@ -127,8 +125,10 @@ function Decode(fport, payload) {
   return decoded;
 }
 
-let payload =
+// Frame 01 Payload
+let payload_frame1 =
   "0153010501050207001e00050005010000001e000500016801012c000005001e025800000000000500010064000000";
+let payload_frame2 = "025601050105010002d0003c003c0000";
 
-let decodedData = Decode(199, payload);
+let decodedData = Decode(199, payload_frame2);
 console.log(decodedData);
