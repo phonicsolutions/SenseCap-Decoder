@@ -101,6 +101,31 @@ const BytesToPositioningStrategy = (byte) => {
   }
 };
 
+const BytesToPositioningStatus = (byte) => {
+  switch (byte) {
+    case "00":
+      return "Positioning successful";
+    case "01":
+      return "The GNSS scan timed out and failed to obtain the location.";
+    case "02":
+      return "The Wi-Fi scan timed out and failed to obtain the location.";
+    case "03":
+      return "The Wi-Fi + GNSS scan timed out and failed to obtain the location.";
+    case "04":
+      return "The GNSS + Wi-Fi scan timed out and failed to obtain the location.";
+    case "05":
+      return "The Bluetooth scan timed out and failed to obtain the location.";
+    case "06":
+      return "The Bluetooth + Wi-Fi scan timed out and failed to obtain the location.";
+    case "07":
+      return "The Bluetooth + GNSS scan timed out and failed to obtain the location.";
+    case "08":
+      return "The Bluetooth + Wi-Fi + GNSS scan timed out and failed to obtain the location.";
+    default:
+      return "Unknown positioning strategy";
+  }
+};
+
 const BytesToInterval = (bytes) => {
   return parseInt(bytes.join(""), 16);
 };
@@ -220,6 +245,7 @@ module.exports = {
   Bytes2HexString,
   HexStringToDecimal,
   BytesToPositioningStrategy,
+  BytesToPositioningStatus,
   BytesToInterval,
   BytesToTemperature,
   BytesToLight,

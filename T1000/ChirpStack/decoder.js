@@ -200,7 +200,15 @@ const unpack = (frameID, payload) => {
       break;
 
     case "11": // Positioning Status and Sensor Packet-0x11
-      result = {};
+      result = {
+        packetID: payload[0],
+        positioningStrategy: utils.BytesToPositioningStatus(payload[1]), // Positioning status
+        eventStatus: utils.ByteEventStatus(payload.slice(2, 5)),
+        utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
+        temperature: utils.HexStringToDecimal(payload.slice(9, 11)) / 10,
+        light: utils.HexStringToDecimal(payload.slice(11, 13)),
+        batteryLevel: utils.HexStringToDecimal(payload[13]), // Battery level in percentage
+      };
       break;
     default:
       result = { error: "Unsupported frameID" };
@@ -244,6 +252,7 @@ let payload_frame0B =
   "0B00000800646225bb5162d2c1b9d3ca1b5bd2afeae5c0d0e2d70529e8c957";
 
 let payload_frame0D = "0D00000001";
+let payload_frame11 = "110100000064a763a0014100002f";
 
-let decodedData = Decode(199, payload_frame0D);
+let decodedData = Decode(199, payload_frame11);
 console.log(decodedData);
