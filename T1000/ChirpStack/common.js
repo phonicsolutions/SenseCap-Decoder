@@ -1,7 +1,6 @@
 // Utility Functions
 
 // GetDeviceModeAndID
-
 function GetFrameID(bytes) {
   if (bytes.length === 0) {
     return Error("Empty byte array");
@@ -15,15 +14,15 @@ function GetFrameID(bytes) {
 // Convert hex strings to bytes array
 const Bytes2HexString = (hexString) => {
   const hex = hexString.trim();
-
-  if (hex.length < 1 || hex.length > 100) {
-    return null;
-  }
-
   let bytes = [];
 
+  if (hex.length < 1 || hex.length > 100) {
+    return bytes;
+  }
+
   for (let i = 0; i < hex.length; i += 2) {
-    bytes.push(hex.substr(i, 2, 16).toString().toLocaleUpperCase());
+    // bytes.push(hex.substr(i, 2, 16).toString().toLocaleUpperCase());
+    bytes.push(hex.substr(i, 2).toUpperCase());
   }
 
   return bytes;

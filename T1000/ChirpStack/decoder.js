@@ -211,7 +211,7 @@ const unpack = (frameID, payload) => {
       };
       break;
     default:
-      result = { error: "Unsupported frameID" };
+      result = payload;
       break;
   }
 
@@ -219,12 +219,37 @@ const unpack = (frameID, payload) => {
 };
 
 function Decode(fport, payload) {
-  let decoded = {
+  var bytes = utils.Bytes2HexString(payload);
+  var fport = parseInt(fport);
+
+  var decoded = {
+    valid: true,
     fport: fport,
     errors: "",
+    messages: [],
   };
 
-  let bytes = utils.Bytes2HexString(payload);
+  if (fport === 199 || fport === 192) {
+    decoded.messages.push({
+      fport: fport,
+      payload: bytes,
+    });
+    return {
+      data: decoded,
+    };
+  }
+
+  if (fport != 5) {
+    decoded.valid = false;
+    return {
+      data: decoded,
+    };
+  }
+
+  if (bytes.length <= 0) {
+    decoded.valid = false;
+    return decoded;
+  }
 
   const id = utils.GetFrameID(bytes.slice(0, 1));
 
@@ -250,9 +275,10 @@ let payload_frame0A =
   "0A0000080064622472487397162234bb3ccd5798fd2ebc74cf002f3ad0a9ec26ca022958b957";
 let payload_frame0B =
   "0B00000800646225bb5162d2c1b9d3ca1b5bd2afeae5c0d0e2d70529e8c957";
-
 let payload_frame0D = "0D00000001";
 let payload_frame11 = "110100000064a763a0014100002f";
 
-let decodedData = Decode(199, payload_frame11);
+let payload_frame12 = "";
+
+let decodedData = Decode(5, payload_frame11);
 console.log(decodedData);
