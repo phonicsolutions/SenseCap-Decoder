@@ -199,6 +199,19 @@ const ByteRSSIMacAddress = (byte) => {
   return decimalValue;
 };
 
+const ByteErrorCode = (bytes) => {
+  const byteString = bytes.join("");
+  const byteValue = parseInt(byteString, 16);
+
+  const errorMessages = {
+    1: "UTC time acquisition failed", // 0x01 in hex
+    2: "Almanac too old", // 0x02 in hex
+    3: "Doppler error", //  0x03 in hex
+  };
+
+  return errorMessages[byteValue] || "Unknown error";
+};
+
 // Export functions
 module.exports = {
   GetDeviceMode,
@@ -215,4 +228,5 @@ module.exports = {
   ByteEventStatus,
   ByteMacAddress,
   ByteRSSIMacAddress,
+  ByteErrorCode,
 };

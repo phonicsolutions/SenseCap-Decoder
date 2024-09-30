@@ -193,7 +193,10 @@ const unpack = (frameID, payload) => {
       break;
 
     case "0D": // Error Code Packet-0x0D
-      result = {};
+      result = {
+        packetID: payload[0],
+        errorCode: utils.ByteErrorCode(payload.slice(1, 5)),
+      };
       break;
 
     case "11": // Positioning Status and Sensor Packet-0x11
@@ -240,5 +243,7 @@ let payload_frame0A =
 let payload_frame0B =
   "0B00000800646225bb5162d2c1b9d3ca1b5bd2afeae5c0d0e2d70529e8c957";
 
-let decodedData = Decode(199, payload_frame0B);
+let payload_frame0D = "0D00000001";
+
+let decodedData = Decode(199, payload_frame0D);
 console.log(decodedData);
