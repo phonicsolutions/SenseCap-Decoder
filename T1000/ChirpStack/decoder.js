@@ -147,7 +147,15 @@ const unpack = (frameID, payload) => {
       break;
 
     case "09": // GNSS Location Only Packet-0x09
-      result = {};
+      result = {
+        packetID: payload[0],
+        eventStatus: utils.ByteEventStatus(payload.slice(1, 4)),
+        motionSegmentNumber: utils.ByteMotionDetection(payload[4]),
+        utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
+        longitude: utils.HexStringToDecimal(payload.slice(9, 13)) / 1000000,
+        latitude: utils.HexStringToDecimal(payload.slice(13, 17)) / 1000000,
+        batteryLevel: utils.HexStringToDecimal(payload[17]), // Battery level in percentage
+      };
       break;
 
     case "0A": // Wi-Fi Location Only Packet-0x0A
