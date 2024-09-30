@@ -97,14 +97,28 @@ const unpack = (frameID, payload) => {
     case "06": // GNSS Location and Sensor Packet-0x06
       result = {
         packetID: payload[0],
-        eventStatus: parseInt(payload.slice(1, 4).toString("hex"), 16),
-        motionSegmentNumber: payload[4],
-        utcTime: parseInt(payload.slice(5, 9).toString("hex"), 16),
-        longitude: parseInt(payload.slice(9, 13).toString("hex"), 16) / 1000000,
-        latitude: parseInt(payload.slice(13, 17).toString("hex"), 16) / 1000000,
-        temperature: parseInt(payload.slice(17, 19).toString("hex"), 16) / 10,
-        light: parseInt(payload.slice(19, 21).toString("hex"), 16),
-        batteryLevel: parseInt(payload.slice(21, 22).toString("hex"), 16),
+        eventStatus: utils.ByteEventStatus(payload.slice(1, 4)),
+        motionSegmentNumber: utils.ByteMotionDetection(payload[4]),
+        utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
+        longitude: utils.HexStringToDecimal(payload.slice(9, 13)) / 1000000,
+        latitude: utils.HexStringToDecimal(payload.slice(13, 17)) / 1000000,
+        temperature: utils.HexStringToDecimal(payload.slice(17, 19)) / 10,
+        light: utils.HexStringToDecimal(payload.slice(19, 21)),
+        batteryLevel: utils.HexStringToDecimal(payload[21]), // Battery level in percentage
+      };
+      break;
+
+    case "07":
+      result = {
+        packetID: payload[0],
+        eventStatus: utils.ByteEventStatus(payload.slice(1, 4)),
+        motionSegmentNumber: utils.ByteMotionDetection(payload[4]),
+        utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
+        longitude: utils.HexStringToDecimal(payload.slice(9, 13)) / 1000000,
+        latitude: utils.HexStringToDecimal(payload.slice(13, 17)) / 1000000,
+        temperature: utils.HexStringToDecimal(payload.slice(17, 19)) / 10,
+        light: utils.HexStringToDecimal(payload.slice(19, 21)),
+        batteryLevel: utils.HexStringToDecimal(payload[21]), // Battery level in percentage
       };
       break;
 
@@ -140,6 +154,9 @@ let payload_frame1 =
   "0153010501050207001e00050005010000001e000500016801012c000005001e025800000000000500010064000000";
 let payload_frame2 = "025601050105010002d0003c003c0000";
 let payload_frame5 = "0564010001";
+let payload_frame6 = "06000008006462248d06ca502801587ec600fe000057";
+let payload_frame7 =
+  "070000080064622472487397162234bb3ccd5798fd2ebc74cf002f3ad0a9ec26ca022958b900fe000057";
 
-let decodedData = Decode(199, payload_frame5);
+let decodedData = Decode(199, payload_frame7);
 console.log(decodedData);

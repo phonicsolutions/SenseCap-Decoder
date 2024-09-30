@@ -138,26 +138,42 @@ const ByteThresholdWarning = (bytes) => {
   return result;
 };
 
-const BytesTemperatureThreshold = (bytes) => {
-  const byte = bytes.toString();
-  let result = "";
-  switch (byte) {
-    case "00":
-      result = "temp < min threshold";
-      break;
-    case "01":
-      result = "temp > max threshold";
-      break;
-    case "02":
-      result = "temp < min threshold and temp > max threshold";
-      break;
-    case "03":
-      result = "min threshold < temp < maxthreshold";
-      break;
+const ByteMotionDetection = (byte) => {
+  let motionByte = byte;
+  let motionSegmentNumber = 0;
 
-    default:
-      result = "invalid byte mapping";
+  if (typeof motionByte === "string") {
+    motionByte = parseInt(motionByte, 16);
   }
+
+  if (motionSegmentNumber > 0) {
+    motionSegmentNumber++;
+    // Ensure the segment number wraps around within 0x00 to 0xFF
+    motionSegmentNumber = motionSegmentNumber & 0xff;
+  }
+
+  return motionSegmentNumber;
+};
+
+const ByteEventStatus = (bytes) => {
+  const byteString = bytes.join("");
+
+  const byteValue = parseInt(byteString, 16); // Convert hex string to integer
+
+  // Mask to get only the last 8 bits (event status byte)
+  const eventStatusByte = byteValue & 0xff;
+
+  // Map the bits to the correct events based on your specification
+  if (eventStatusByte & 0x01) return "Start moving event";
+  if (eventStatusByte & 0x02) return "End movement event";
+  if (eventStatusByte & 0x04) return "Motionless event";
+  if (eventStatusByte & 0x08) return "Shock event";
+  if (eventStatusByte & 0x10) return "Temperature event";
+  if (eventStatusByte & 0x20) return "Light event";
+  if (eventStatusByte & 0x40) return "SOS event";
+  if (eventStatusByte & 0x80) return "Press once event";
+
+  return "No event"; // If no bits are set
 };
 
 // Export functions
@@ -172,4 +188,6 @@ module.exports = {
   BytesToTemperature,
   BytesToLight,
   ByteThresholdWarning,
+  ByteMotionDetection,
+  ByteEventStatus,
 };
