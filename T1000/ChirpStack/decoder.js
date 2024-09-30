@@ -177,7 +177,19 @@ const unpack = (frameID, payload) => {
       break;
 
     case "0B": // Bluetooth Location Only Packet-0x0B
-      result = {};
+      result = {
+        packetID: payload[0],
+        eventStatus: utils.ByteEventStatus(payload.slice(1, 4)),
+        motionSegmentNumber: utils.ByteMotionDetection(payload[4]),
+        utcTime: utils.HexStringToDecimal(payload.slice(5, 9)),
+        macAddressOne: utils.ByteMacAddress(payload.slice(9, 15)),
+        rssiMacAddressOne: utils.ByteRSSIMacAddress(payload[15]),
+        macAddressTwo: utils.ByteMacAddress(payload.slice(16, 22)),
+        rssiMacAddressTwo: utils.ByteRSSIMacAddress(payload[22]),
+        macAddressThree: utils.ByteMacAddress(payload.slice(23, 29)),
+        rssiMacAddressThree: utils.ByteRSSIMacAddress(payload[29]),
+        batteryLevel: utils.HexStringToDecimal(payload[30]), // Battery level in percentage
+      };
       break;
 
     case "0D": // Error Code Packet-0x0D
@@ -225,6 +237,8 @@ let payload_frame8 =
 let payload_frame9 = "09000000006463186806ca506801587e4c56";
 let payload_frame0A =
   "0A0000080064622472487397162234bb3ccd5798fd2ebc74cf002f3ad0a9ec26ca022958b957";
+let payload_frame0B =
+  "0B00000800646225bb5162d2c1b9d3ca1b5bd2afeae5c0d0e2d70529e8c957";
 
-let decodedData = Decode(199, payload_frame0A);
+let decodedData = Decode(199, payload_frame0B);
 console.log(decodedData);
