@@ -82,6 +82,16 @@ const unpack = (frameID, payload) => {
       };
       break;
     case "05": // Heartbeat Packet -0x05
+      result = {
+        packetID: payload[0],
+        batteryLevel: utils.HexStringToDecimal(payload[1]), // Battery level in percentage
+        workMode: utils.GetDeviceMode(payload[2]), // Work mode
+        positioningStrategy: utils.BytesToPositioningStrategy(payload[3]), // Positioning strategy
+        sosMode:
+          payload[4] === "00"
+            ? "use SOS single mode"
+            : "use SOS continuous mode",
+      };
       break;
 
     case "06": // GNSS Location and Sensor Packet-0x06
@@ -129,6 +139,7 @@ function Decode(fport, payload) {
 let payload_frame1 =
   "0153010501050207001e00050005010000001e000500016801012c000005001e025800000000000500010064000000";
 let payload_frame2 = "025601050105010002d0003c003c0000";
+let payload_frame5 = "0564010001";
 
-let decodedData = Decode(199, payload_frame2);
+let decodedData = Decode(199, payload_frame5);
 console.log(decodedData);
